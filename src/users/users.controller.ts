@@ -2,30 +2,34 @@ import { Body, Controller, Get, Param, Post, Put, Query, Delete} from '@nestjs/c
 import { CreateUserDto } from './create-user.dto';
 import { UpdateUserDto } from './update-user.dto';
 import { UsersService } from './users.service';
+import { User } from './user.entity';
 
 @Controller('users')
 export class UsersController {
     constructor(private usersService: UsersService) {}
 
     @Get('all')
-    async getAll(): Promise<any[]> {
-        return this.usersService.getAll();
+    async getAll(): Promise<User[]> {
+        return await this.usersService.findAll();
     }
 
     @Get(':id')
-    async getUserByParam(@Param() params: any): Promise<any[]> {
-        return [];
+    async getUserByParam(@Param() params: any): Promise<User> {
+        return await this.usersService.findOne(params.id);
     }
 
     @Get()
-    async getUserByQuery(@Query('id') id): Promise<any[]> {
-        return [];
+    async getUserByQuery(@Query('id') id): Promise<User> {
+        return await this.usersService.findOne(id);
     }
 
 
     @Post()
     async create(@Body() createUserDto: CreateUserDto) {
-        this.usersService.create(createUserDto);
+        const user = new User();
+        user.username = createUserDto.username;
+        user.password = createUserDto.password;
+        return await this.usersService.create(user);
     }
 
     @Put(':id')
@@ -35,6 +39,6 @@ export class UsersController {
 
     @Delete(':id')
     async remove(@Param('id') id) {
-        return 'This action removes a user with id ' + id + '.';
+        return await this.usersService.remove(id);
     }
 }
