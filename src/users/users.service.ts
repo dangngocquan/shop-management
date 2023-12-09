@@ -10,7 +10,7 @@ export class UsersService {
         private usersRepository: Repository<User>,
       ) {}
 
-    create(user: User) {
+    async create(user: User) {
         return this.usersRepository.save(user);
     }
 
@@ -20,9 +20,15 @@ export class UsersService {
 
     findOne(id: number): Promise<User> {
         return this.usersRepository.findOneBy({ id })
-      }
+    }
 
-    async remove(id: number): Promise<void> {
-        await this.usersRepository.delete(id);
+    async update(id: number, user: User): Promise<any> {
+        const userUpdate = await this.usersRepository.findOneBy({ id });
+        userUpdate.password = user.password;
+        return this.usersRepository.save(userUpdate);
+    }
+
+    async remove(id: number): Promise<any> {
+        return await this.usersRepository.delete(id);
     }
 }
