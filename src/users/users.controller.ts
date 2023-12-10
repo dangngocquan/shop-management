@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Delete} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Delete, ParseIntPipe} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users Controller')
 @Controller('users')
 export class UsersController {
     constructor(private usersService: UsersService) {}
@@ -13,16 +15,14 @@ export class UsersController {
         return await this.usersService.findAll();
     }
 
-    @Get(':id')
-    async getUserByParam(@Param() params: any): Promise<User> {
-        return await this.usersService.findOne(params.id);
-    }
-
     @Get()
-    async getUserByQuery(@Query('id') id): Promise<User> {
-        return await this.usersService.findOne(id);
+    async getUser(@Query('id', ParseIntPipe) id, @Query('username') username, @Query('password') password): Promise<User> {
+        const options = {};
+        if (id !== undefined) options['id'] = id;
+        if (username !== undefined) options['username'] = username;
+        if (password !== undefined) options['password'] = password;
+        return await this.usersService.findOne(options);
     }
-
 
     @Post()
     async create(@Body() createUserDto: CreateUserDto) {
@@ -33,14 +33,14 @@ export class UsersController {
     }
 
     @Put(':id')
-    async update(@Param('id') id, @Body() updateUserDto: UpdateUserDto) {
+    async update(@Param('id', ParseIntPipe) id, @Body() updateUserDto: UpdateUserDto) {
         const user = new User();
         user.password = updateUserDto.password;
         return await this.usersService.update(id, user);
     }
 
     @Delete(':id')
-    async remove(@Param('id') id) {
+    async remove(@Param('id', ParseIntPipe) id) {
         return await this.usersService.remove(id);
     }
 }
