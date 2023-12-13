@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, JoinTable, ManyToMany } from 'typeorm';
+import { Role } from 'src/auths/roles/entities/role.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { UserRole } from './user-role.entity';
 
 
 @Entity('user')
@@ -11,4 +13,7 @@ export class User {
 
     @Column({type: 'varchar', length: 255})
     password: string;
+
+    @OneToMany(() => UserRole, (userRole) => userRole.user)
+    userRoles: UserRole[];
 }

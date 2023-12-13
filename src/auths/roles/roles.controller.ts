@@ -12,12 +12,12 @@ export class RolesController {
 
     @Get('all')
     async getAll(): Promise<Role[]> {
-        return await this.rolesService.findAll();
+        return await this.rolesService.findAll({});
     }
 
     @Get()
     async getRole(@Query('id', ParseIntPipe) id): Promise<Role> {
-        return await this.rolesService.findOne(id);
+        return await this.rolesService.findOne({ id });
     }
 
 

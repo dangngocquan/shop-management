@@ -1,16 +1,25 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Delete, ParseIntPipe} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Delete, ParseIntPipe, UseGuards} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auths/roles/roles.decorator';
+import { Role } from 'src/auths/roles/roles.enum';
+import { AddRoleDto } from './dto/add-role.dto';
+import { RolesService } from 'src/auths/roles/roles.service';
+import { AuthGuard } from 'src/auths/auths/auths.guard';
 
 @ApiTags('Users Controller')
 @Controller('users')
 export class UsersController {
-    constructor(private usersService: UsersService) {}
+    constructor(
+        private usersService: UsersService
+    ) {}
 
     @Get('all')
+    @UseGuards(AuthGuard)
+    @Roles(Role.Admin)
     async getAll(): Promise<User[]> {
         return await this.usersService.findAll();
     }
@@ -30,6 +39,13 @@ export class UsersController {
         user.username = createUserDto.username;
         user.password = createUserDto.password;
         return await this.usersService.create(user);
+    }
+
+    @Post(':id')
+    async addRole(@Param('id', ParseIntPipe) id, @Body() addRoleDto: AddRoleDto) {
+        const user = await this.usersService.findOne({id});
+        return await this.usersService.addRole(user, addRoleDto.id);
+
     }
 
     @Put(':id')

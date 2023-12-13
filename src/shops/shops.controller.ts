@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Delete, ParseIntPipe} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Delete, ParseIntPipe, UseGuards} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ShopsService } from './shops.sevice';
 import { Shop } from './entities/shop.entity';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
+import { AuthGuard } from 'src/auths/auths/auths.guard';
+import { Public } from 'src/auths/auths/auths.decorator';
 
 @ApiTags('Shops Controller')
 @Controller('shops')

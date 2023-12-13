@@ -14,6 +14,8 @@ import { ProductsModule } from './products/products.module';
 import { AuthsModule } from './auths/auths/auths.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auths/auths/constants';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auths/roles/roles.guard';
 
 @Module({
   imports: [
@@ -34,16 +36,17 @@ import { jwtConstants } from './auths/auths/constants';
       }),
       inject: [ConfigService],
     }),
-    JwtModule.register({
-      global: true,
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
-    }),
     UsersModule,
     RolesModule,
     ShopsModule,
     ProductsModule,
     AuthsModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {
