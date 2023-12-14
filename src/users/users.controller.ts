@@ -7,8 +7,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auths/roles/roles.decorator';
 import { Role } from 'src/auths/roles/roles.enum';
 import { AddRoleDto } from './dto/add-role.dto';
-import { RolesService } from 'src/auths/roles/roles.service';
 import { AuthGuard } from 'src/auths/auths/auths.guard';
+import { RolesGuard } from 'src/auths/roles/roles.guard';
 
 @ApiTags('Users Controller')
 @Controller('users')
@@ -18,8 +18,9 @@ export class UsersController {
     ) {}
 
     @Get('all')
-    @UseGuards(AuthGuard)
     @Roles(Role.Admin)
+    @UseGuards(AuthGuard, RolesGuard)
+    // @UseGuards(RolesGuard)
     async getAll(): Promise<User[]> {
         return await this.usersService.findAll();
     }

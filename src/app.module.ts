@@ -12,8 +12,6 @@ import { UserRole } from './users/entities/user-role.entity';
 import { ShopsModule } from './shops/shops.module';
 import { ProductsModule } from './products/products.module';
 import { AuthsModule } from './auths/auths/auths.module';
-import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './auths/auths/constants';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auths/roles/roles.guard';
 
@@ -43,10 +41,10 @@ import { RolesGuard } from './auths/roles/roles.guard';
     AuthsModule,
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
   ],
 })
 export class AppModule {
