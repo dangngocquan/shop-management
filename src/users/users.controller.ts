@@ -19,7 +19,7 @@ export class UsersController {
 
     @Get('all')
     @Roles(Role.Admin)
-    @UseGuards(AuthGuard, RolesGuard)
+    // @UseGuards(AuthGuard, RolesGuard)
     // @UseGuards(RolesGuard)
     async getAll(): Promise<User[]> {
         return await this.usersService.findAll();

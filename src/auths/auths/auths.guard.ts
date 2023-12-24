@@ -43,7 +43,6 @@ import { IS_PUBLIC_KEY } from './auths.decorator';
         } catch {
             throw new UnauthorizedException();
         }
-        console.log("AuthGuard: " + request['user']);
         return true;
     }
   

@@ -14,6 +14,7 @@ import { ProductsModule } from './products/products.module';
 import { AuthsModule } from './auths/auths/auths.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auths/roles/roles.guard';
+import { AuthGuard } from './auths/auths/auths.guard';
 
 @Module({
   imports: [
@@ -41,11 +42,15 @@ import { RolesGuard } from './auths/roles/roles.guard';
     AuthsModule,
   ],
   providers: [
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: RolesGuard,
-    // },
-  ],
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ]
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}
