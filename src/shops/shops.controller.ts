@@ -4,8 +4,10 @@ import { ShopsService } from './shops.sevice';
 import { Shop } from './entities/shop.entity';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
-import { AuthGuard } from 'src/auths/auths/auths.guard';
-import { Public } from 'src/auths/auths/auths.decorator';
+import { PoliciesGuard } from 'src/auths/policy/policy.guard';
+import { CheckPolicies } from 'src/auths/policy/policy.decorator';
+import { AppAbility } from 'src/auths/casl/casl-ability.factory';
+import { Action } from 'src/auths/casl/actions.enum';
 
 @ApiTags('Shops Controller')
 @Controller('shops')

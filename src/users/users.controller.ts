@@ -7,8 +7,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auths/roles/roles.decorator';
 import { Role } from 'src/auths/roles/roles.enum';
 import { AddRoleDto } from './dto/add-role.dto';
-import { AuthGuard } from 'src/auths/auths/auths.guard';
-import { RolesGuard } from 'src/auths/roles/roles.guard';
+import { RemoveRoleDto } from './dto/remove-role.dto';
 
 @ApiTags('Users Controller')
 @Controller('users')
@@ -19,8 +18,6 @@ export class UsersController {
 
     @Get('all')
     @Roles(Role.Admin)
-    // @UseGuards(AuthGuard, RolesGuard)
-    // @UseGuards(RolesGuard)
     async getAll(): Promise<User[]> {
         return await this.usersService.findAll();
     }
@@ -42,13 +39,18 @@ export class UsersController {
         return await this.usersService.create(user);
     }
 
-    @Post(':id')
+    @Post(':id/addRole')
     async addRole(@Param('id', ParseIntPipe) id, @Body() addRoleDto: AddRoleDto) {
         const user = await this.usersService.findOne({id});
         return await this.usersService.addRole(user, addRoleDto.id);
-
     }
 
+
+    @Post(':id/removeRole')
+    async removeRole(@Param('id', ParseIntPipe) id, @Body() removeRoleDto: RemoveRoleDto) {
+        const user = await this.usersService.findOne({id});
+        return await this.usersService.removeRole(user, removeRoleDto.id);
+    }
     @Put(':id')
     async update(@Param('id', ParseIntPipe) id, @Body() updateUserDto: UpdateUserDto) {
         const user = new User();
