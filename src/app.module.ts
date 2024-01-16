@@ -15,6 +15,7 @@ import { AuthsModule } from './auths/auths/auths.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auths/roles/roles.guard';
 import { AuthGuard } from './auths/auths/auths.guard';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -35,6 +36,11 @@ import { AuthGuard } from './auths/auths/auths.guard';
         synchronize: true,
       }),
       inject: [ConfigService],
+    }),
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 120000, // milliseconds
+      max: 100, // maximum number of items in cache
     }),
     UsersModule,
     RolesModule,

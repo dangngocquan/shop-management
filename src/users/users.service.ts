@@ -60,7 +60,7 @@ export class UsersService {
         })
     }
 
-    async update(id: number, user: User): Promise<any> {
+    async updatePassword(id: number, user: User): Promise<any> {
         const userUpdate = await this.usersRepository.findOneBy({ id });
         userUpdate.password = user.password;
         return this.usersRepository.save(userUpdate);

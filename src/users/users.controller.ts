@@ -52,10 +52,10 @@ export class UsersController {
         return await this.usersService.removeRole(user, removeRoleDto.id);
     }
     @Put(':id')
-    async update(@Param('id', ParseIntPipe) id, @Body() updateUserDto: UpdateUserDto) {
+    async updatePassword(@Param('id', ParseIntPipe) id, @Body() updateUserDto: UpdateUserDto) {
         const user = new User();
         user.password = updateUserDto.password;
-        return await this.usersService.update(id, user);
+        return await this.usersService.updatePassword(id, user);
     }
 
     @Delete(':id')
