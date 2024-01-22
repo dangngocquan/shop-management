@@ -5,8 +5,8 @@ import { SignInSignUpDto } from "./dto/sign-in.dto";
 import { Public } from "./auths.decorator";
 import { SignInSignUpSocialDto } from "./dto/sign-in-social.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
-import { ForgetPasswordDto } from "./dto/forget-password.dto";
-import { ResetForgetPasswordDto } from "./dto/reset-forget-password.dto";
+import { ForgetPasswordStep1Dto } from "./dto/forget-password-step-1.dto";
+import { ForgetPasswordStep3Dto } from "./dto/forget-password-step-3.dto";
 
 
 
@@ -50,22 +50,22 @@ export class AuthsController {
 
     @Public()
     @HttpCode(HttpStatus.OK)
-    @Post('forget-password')
-    forgetPassword(@Body() forgetPasswordDto: ForgetPasswordDto) {
-        return this.authService.forgetPassword(forgetPasswordDto.username);
+    @Post('forget-password-step-1')
+    forgetPassword(@Body() forgetPasswordDto: ForgetPasswordStep1Dto) {
+        return this.authService.forgetPasswordStep1(forgetPasswordDto.username);
     }
 
     @Public()
     @HttpCode(HttpStatus.OK)
-    @Post('forget-password/verify-otp')
+    @Post('forget-password-step-2')
     verifyOtpForgetPassword(@Body() verifyOtpDto: VerifyOtpDto) {
-        return this.authService.verifyOtpResetPassword(verifyOtpDto.email, verifyOtpDto.otp);
+        return this.authService.forgetPasswordStep2(verifyOtpDto.email, verifyOtpDto.otp);
     }
 
     @Public()
     @HttpCode(HttpStatus.OK)
-    @Post('forget-password/reset-password')
-    resetForgetPassword(@Body() resetForgetPasswordDto: ResetForgetPasswordDto) {
-        return this.authService.resetPassword(resetForgetPasswordDto.sercurityToken, resetForgetPasswordDto.password);
+    @Post('forget-password-step-3')
+    resetForgetPassword(@Body() resetForgetPasswordDto: ForgetPasswordStep3Dto) {
+        return this.authService.forgetPasswordStep3(resetForgetPasswordDto.sercurityToken, resetForgetPasswordDto.password);
     }
 }

@@ -70,8 +70,49 @@ export class AuthsService {
         // Send verify email
         return this.mailService.sendEmailConfirmation(username, otp);
     }
+    
+    // Check username (email of user) and send OTP code to email
+    async forgetPasswordStep1(username: string): Promise<any> {
+        // check existed user
+        const u = await this.userService.findOne({ username });
+        if (u === undefined || u == null) {
+            throw new ConflictException();
+        }
+        // Create OTP code
+        const otp: string = (1000000 +  Math.round(Math.random() * 999999)).toString().slice(1);
+        // Save to Cache
+        await this.cacheManager.set(
+            username + "--" + otp, 
+            {
+                username: username
+            },
+            300000 // 300s
+        );
+        // Send verify email
+        return this.mailService.sendEmailConfirmation(username, otp);
+    }
 
-    async resetPassword(sercurityToken: string, newPass: string): Promise<any> {
+    // Verify OTP code and email, return a sercurity token if successful
+    async forgetPasswordStep2(email: string, otp: string): Promise<any> {
+        // Check email and otp in Cache
+        const user = await this.cacheManager.get(email + "--" + otp);
+        if (user === null || user === undefined) {
+            throw new UnauthorizedException();
+        }
+        // Return sercurity token
+        const u = await this.userService.findOne({ username: email });
+        const payload = {
+            id: u.id,
+            username: u.username
+        }
+
+        return {
+            sercurityToken: await this.jwtService.signAsync(payload),
+        };
+    }
+
+    // Update password for user
+    async forgetPasswordStep3(sercurityToken: string, newPass: string): Promise<any> {
         const user = await this.jwtService.verifyAsync(
             sercurityToken,
             {
@@ -84,45 +125,6 @@ export class AuthsService {
         
         // Login
         return this.signIn(user['username'], newPass);
-    }
-
-    async verifyOtpResetPassword(email: string, otp: string): Promise<any> {
-        // Check email and otp in Cache
-        const user = await this.cacheManager.get(email + "--" + otp);
-        if (user === null || user === undefined) {
-            throw new UnauthorizedException();
-        }
-        // Return sercurity token
-        const u = await this.userService.findOne({ email });
-        const payload = {
-            id: u.id,
-            username: u.username
-        }
-
-        return {
-            sercurityToken: await this.jwtService.signAsync(payload),
-        };
-    }
-
-    async forgetPassword(username: string): Promise<any> {
-        // check existed user
-        const u = await this.userService.findOne({ username });
-        if (u === undefined || u == null) {
-            throw new ConflictException();
-        }
-
-        // Create otp
-        const otp: string = (1000000 +  Math.round(Math.random() * 999999)).toString().slice(1);
-        // Save to Cache
-        await this.cacheManager.set(
-            username + "--" + otp, 
-            {
-                username: username
-            },
-            300000
-        );
-        // Send verify email
-        return this.mailService.sendEmailConfirmation(username, otp);
     }
 
     async signInGoogle(token: string) {
